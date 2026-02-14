@@ -12,10 +12,11 @@ npm run dev
 
 ## Configure API base
 
-Set `VITE_API_BASE_URL` in your `.env` file (copy from `.env.example`).
+Set `VITE_API_BASE_URL` and `VITE_STRIPE_PUBLISHABLE_KEY` in your `.env` file (copy from `.env.example`).
 
 ```env
 VITE_API_BASE_URL=http://localhost:5000
+VITE_STRIPE_PUBLISHABLE_KEY=pk_test_your_publishable_key
 ```
 
 ## Endpoints and payloads to edit

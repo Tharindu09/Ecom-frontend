@@ -24,6 +24,8 @@ export const endpoints = {
   cart: {
     my: "/api/cart/my",
     addMy: "/api/cart/my/add",
+    removeMy: (productId) => `/api/cart/my/remove/${productId}`,
+    clearMy: "/api/cart/my/clear",
     mapAddItemPayload: ({ productId, qty }) => ({
       ProductId: productId,
       Quantity: qty,
@@ -37,6 +39,7 @@ export const endpoints = {
         name: item.name || item.productName || item.ProductName,
         price: item.price ?? item.Price,
         imageUrl: item.imageUrl || item.image || item.image_url,
+        stock: item.stock ?? item.Stock ?? item.productStock ?? null,
       }));
     },
   },
@@ -52,6 +55,16 @@ export const endpoints = {
       City: address?.city || "",
       Country: address?.country || "",
       PostalCode: address?.postalCode || "",
+    }),
+  },
+  payments: {
+    process: "/api/payments/process",
+    mapProcessPayload: ({ amount, currency, paymentMethodId, idempotencyKey, orderId }) => ({
+      Amount: Number(amount),
+      Currency: currency,
+      PaymentMethodId: paymentMethodId,
+      IdempotencyKey: idempotencyKey,
+      OrderId: Number(orderId),
     }),
   },
 };

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import { getProduct } from "../api/productService.js";
 import Loader from "../components/Loader.jsx";
@@ -7,7 +7,7 @@ import { useCart } from "../cart/CartContext.js";
 
 const ProductDetail = ({ onToast }) => {
   const { id } = useParams();
-  const { addItem } = useCart();
+  const { addItem, items } = useCart();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -42,6 +42,23 @@ const ProductDetail = ({ onToast }) => {
       ? [product.image]
       : [];
 
+  const productId = product?.id || product?.productId;
+  const stockValue = useMemo(() => {
+    const parsed = Number(product?.stock ?? product?.Stock ?? product?.productStock);
+    return Number.isFinite(parsed) ? parsed : null;
+  }, [product]);
+  const inCartQty =
+    items.find((item) => item.productId === productId)?.qty || 0;
+  const availableStock = stockValue != null ? stockValue - inCartQty : null;
+  const maxQty = availableStock != null ? Math.max(availableStock, 1) : 99;
+  const isOutOfStock = availableStock != null && availableStock <= 0;
+
+  useEffect(() => {
+    if (qty > maxQty) {
+      setQty(maxQty);
+    }
+  }, [qty, maxQty]);
+
   if (loading) return <Loader label="Loading product" />;
 
   if (error) return <p className="error">{error}</p>;
@@ -49,6 +66,10 @@ const ProductDetail = ({ onToast }) => {
   if (!product) return <p className="muted">Product not found.</p>;
 
   const handleAdd = () => {
+    if (isOutOfStock || (availableStock != null && qty > availableStock)) {
+      onToast?.("Only available stock can be added.", "error");
+      return;
+    }
     addItem(product, qty);
     onToast?.("Added to cart", "success");
   };
@@ -77,8 +98,13 @@ const ProductDetail = ({ onToast }) => {
         )}
         <p>{product?.description || "No description available."}</p>
         <div className="product-detail__actions">
-          <QuantityPicker value={qty} onChange={setQty} min={1} max={99} />
-          <button type="button" className="button" onClick={handleAdd}>
+          <QuantityPicker value={qty} onChange={setQty} min={1} max={maxQty} />
+          <button
+            type="button"
+            className="button"
+            onClick={handleAdd}
+            disabled={isOutOfStock}
+          >
             Add to cart
           </button>
         </div>

@@ -1,9 +1,14 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { STORAGE_KEYS, endpoints } from "../api/endpoints.js";
-import { addMyCartItem, getMyCart } from "../api/cartService.js";
+import { addMyCartItem, clearMyCart, getMyCart, removeMyCartItem } from "../api/cartService.js";
 import { useAuth } from "../auth/AuthContext.js";
 
 const CartContext = createContext(null);
+
+const asNumber = (value) => {
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : null;
+};
 
 const loadStoredItems = () => {
   const raw = localStorage.getItem(STORAGE_KEYS.cartItems);
@@ -19,12 +24,20 @@ const mergeItems = (localItems, serverItems) => {
   const merged = [...localItems];
   serverItems.forEach((serverItem) => {
     if (!serverItem?.productId) return;
+    const serverStock =
+      asNumber(serverItem.stock) ??
+      asNumber(serverItem.Stock) ??
+      asNumber(serverItem.productStock) ??
+      null;
     const existing = merged.find((item) => item.productId === serverItem.productId);
     if (existing) {
       existing.qty = Math.max(existing.qty || 0, serverItem.qty || 0) || 1;
       existing.name = existing.name || serverItem.name;
       existing.price = existing.price || serverItem.price;
       existing.imageUrl = existing.imageUrl || serverItem.imageUrl;
+      if (existing.stock == null && serverStock != null) {
+        existing.stock = serverStock;
+      }
     } else {
       merged.push({
         productId: serverItem.productId,
@@ -32,6 +45,7 @@ const mergeItems = (localItems, serverItems) => {
         name: serverItem.name,
         price: serverItem.price,
         imageUrl: serverItem.imageUrl,
+        stock: serverStock ?? null,
       });
     }
   });
@@ -67,24 +81,34 @@ export const CartProvider = ({ children }) => {
   const addItem = useCallback(async (product, qty = 1) => {
     const productId = product?.id || product?.productId;
     if (!productId) return;
+    const stock =
+      asNumber(product?.stock) ??
+      asNumber(product?.Stock) ??
+      asNumber(product?.productStock) ??
+      null;
+    const stockCap = stock != null && stock > 0 ? stock : null;
     const newItem = {
       productId,
       qty,
       name: product?.name || product?.title,
       price: product?.price,
       imageUrl: product?.imageUrl || product?.image || product?.images?.[0],
+      stock,
     };
 
     setItems((prev) => {
       const existing = prev.find((item) => item.productId === productId);
       if (existing) {
+        const nextQty =
+          stockCap != null ? Math.min(existing.qty + qty, stockCap) : existing.qty + qty;
         return prev.map((item) =>
           item.productId === productId
-            ? { ...item, qty: item.qty + qty }
+            ? { ...item, qty: nextQty, stock: item.stock ?? stock }
             : item
         );
       }
-      return [...prev, newItem];
+      if (stock != null && stock <= 0) return prev;
+      return [...prev, { ...newItem, qty: stockCap != null ? Math.min(qty, stockCap) : qty }];
     });
 
     if (isAuthenticated) {
@@ -98,14 +122,39 @@ export const CartProvider = ({ children }) => {
     if (qty < 1) return;
     setItems((prev) =>
       prev.map((item) =>
-        item.productId === productId ? { ...item, qty } : item
+        item.productId === productId
+          ? {
+              ...item,
+              qty:
+                item.stock != null && item.stock > 0 && qty > item.stock
+                  ? item.stock
+                  : qty,
+            }
+          : item
       )
     );
   }, []);
 
   const removeCartItem = useCallback(async (productId) => {
-    setItems((prev) => prev.filter((item) => item.productId !== productId));
-  }, []);
+    let previousItems = [];
+    setItems((prev) => {
+      previousItems = prev;
+      return prev.filter((item) => item.productId !== productId);
+    });
+
+    if (!isAuthenticated) {
+      return { ok: true };
+    }
+
+    try {
+      await removeMyCartItem(productId);
+      return { ok: true };
+    } catch (error) {
+      setItems(previousItems);
+      console.error("Failed to remove item from my cart", error);
+      return { ok: false, error };
+    }
+  }, [isAuthenticated]);
 
   const persistMyCart = useCallback(async () => {
     if (!isAuthenticated) {
@@ -140,11 +189,25 @@ export const CartProvider = ({ children }) => {
     }
   }, [isAuthenticated, items]);
 
-  const clearCart = useCallback(() => {
+  const clearCart = useCallback(async () => {
+    const previousItems = items;
     setItems([]);
     localStorage.removeItem(STORAGE_KEYS.cartId);
     localStorage.removeItem(STORAGE_KEYS.cartItems);
-  }, []);
+
+    if (!isAuthenticated) {
+      return { ok: true };
+    }
+
+    try {
+      await clearMyCart();
+      return { ok: true };
+    } catch (error) {
+      setItems(previousItems);
+      console.error("Failed to clear my cart", error);
+      return { ok: false, error };
+    }
+  }, [isAuthenticated, items]);
 
   const value = useMemo(
     () => ({

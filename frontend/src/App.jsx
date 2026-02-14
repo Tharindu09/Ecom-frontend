@@ -10,6 +10,10 @@ import Cart from "./pages/Cart.jsx";
 import Checkout from "./pages/Checkout.jsx";
 import Orders from "./pages/Orders.jsx";
 import OrderDetail from "./pages/OrderDetail.jsx";
+import Payment from "./pages/Payment.jsx";
+import PaymentProcessing from "./pages/PaymentProcessing.jsx";
+import PaymentSuccess from "./pages/PaymentSuccess.jsx";
+import PaymentFailed from "./pages/PaymentFailed.jsx";
 import Toast from "./components/Toast.jsx";
 
 const App = () => {
@@ -39,6 +43,38 @@ const App = () => {
             element={
               <ProtectedRoute>
                 <Checkout onToast={showToast} />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/payments/:orderId"
+            element={
+              <ProtectedRoute>
+                <Payment onToast={showToast} />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/payments/processing/:orderId/:paymentId"
+            element={
+              <ProtectedRoute>
+                <PaymentProcessing />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/checkout/success"
+            element={
+              <ProtectedRoute>
+                <PaymentSuccess />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/checkout/failed"
+            element={
+              <ProtectedRoute>
+                <PaymentFailed />
               </ProtectedRoute>
             }
           />

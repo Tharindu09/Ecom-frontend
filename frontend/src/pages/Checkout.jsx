@@ -62,6 +62,10 @@ const Checkout = ({ onToast }) => {
     return addresses[selectedAddressIndex] || null;
   }, [addressMode, addresses, selectedAddressIndex]);
 
+  const subtotal = useMemo(() => {
+    return items.reduce((sum, item) => sum + (item.price || 0) * (item.qty || 0), 0);
+  }, [items]);
+
   const handleChange = (event) => {
     setForm((prev) => ({ ...prev, [event.target.name]: event.target.value }));
   };
@@ -109,10 +113,33 @@ const Checkout = ({ onToast }) => {
         });
       }
 
-      await createOrder(mapAddressToOrderPayload(sourceAddress));
-      clearCart();
-      onToast?.("Order placed successfully", "success");
-      navigate("/orders");
+      const order = await createOrder(mapAddressToOrderPayload(sourceAddress));
+      const nextOrderId =
+        order?.id ||
+        order?.orderId ||
+        order?.data?.id ||
+        order?.data?.orderId;
+
+      if (!nextOrderId) {
+        await clearCart();
+        onToast?.("Order placed, but payment was not started.", "info");
+        navigate("/orders");
+        return;
+      }
+
+      const clearResult = await clearCart();
+      if (!clearResult?.ok) {
+        onToast?.("Order placed, but cart clear failed on server.", "info");
+      }
+
+      onToast?.("Order placed. Continue with payment.", "success");
+      navigate(`/payments/${nextOrderId}`, {
+        state: {
+          order: order?.data || order,
+          amount: subtotal,
+          currency: "usd",
+        },
+      });
     } catch (error) {
       console.error("Failed to place order", error);
       const message =

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { getOrder } from "../api/orderService.js";
 import Loader from "../components/Loader.jsx";
 
@@ -36,6 +36,8 @@ const OrderDetail = ({ onToast }) => {
   if (!order) return <p className="muted">Order not found.</p>;
 
   const items = order?.items || order?.orderItems || [];
+  const normalizedStatus = String(order?.orderStatus || order?.status || "").toLowerCase();
+  const needsPayment = ["pendingpayment", "pending_payment"].includes(normalizedStatus);
 
   return (
     <section className="order-detail">
@@ -50,6 +52,14 @@ const OrderDetail = ({ onToast }) => {
             ? new Date(order?.date || order?.createdAt).toLocaleString()
             : "--"}
         </p>
+        {needsPayment && (
+          <Link
+            to={`/payments/${order?.id || order?.orderId || id}`}
+            className="button"
+          >
+            Pay now
+          </Link>
+        )}
       </div>
       <div className="order-detail__section">
         <h2>Shipping</h2>
