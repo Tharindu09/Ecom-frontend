@@ -16,7 +16,7 @@ const Navbar = () => {
   return (
     <header className="navbar">
       <div className="navbar__brand">
-        <Link to="/products">Ecom Gateway</Link>
+        <Link to="/products">MAPA Ecom</Link>
       </div>
       <nav className="navbar__links">
         {isAuthenticated ? (

@@ -148,15 +148,18 @@ const Payment = ({ onToast }) => {
         const elements = stripe.elements();
         const elementStyle = {
           base: {
-            color: "#1b1b1f",
+            color: "#f8fafc",
+            backgroundColor: "transparent",
+            iconColor: "#f8fafc",
             fontFamily: "Poppins, Segoe UI, Tahoma, Geneva, Verdana, sans-serif",
             fontSize: "15px",
+            lineHeight: "1.4",
             "::placeholder": {
-              color: "#9a9a9a",
+              color: "rgba(248, 250, 252, 0.6)",
             },
           },
           invalid: {
-            color: "#d84343",
+            color: "#ff5a66",
           },
         };
 

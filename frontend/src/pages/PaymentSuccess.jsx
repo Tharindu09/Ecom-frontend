@@ -65,7 +65,7 @@ const PaymentSuccess = () => {
   const total = useMemo(() => getOrderTotal(order), [order]);
 
   return (
-    <section className="payment-result">
+    <section className="payment-result payment-result--success">
       <div className="payment-result__header">
         <h1>Payment successful</h1>
         <p className="muted">Thanks! Your payment has been confirmed.</p>

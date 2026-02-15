@@ -1,7 +1,7 @@
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap");
 
 :root {
-  color-scheme: light;
+  color-scheme: dark;
   --font-family-base: "Poppins", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   --font-size-base: 16px;
   --font-size-h1: clamp(2.1rem, 1.7rem + 2vw, 2.9rem);
@@ -9,28 +9,29 @@
   --font-size-h3: 1.25rem;
   --line-height-base: 1.6;
 
-  --color-bg: #f5f6fa;
-  --color-surface: #ffffff;
-  --color-text: #1b1d2a;
-  --color-muted: #5f6575;
-  --color-border: #d7dbe5;
+  --color-bg: #0f1218;
+  --color-surface: #151a23;
+  --color-surface-muted: #1c2230;
+  --color-text: #e8edf5;
+  --color-muted: #9aa6b8;
+  --color-border: #2a3344;
 
-  --color-primary: #1a4aa3;
-  --color-primary-hover: #17408f;
-  --color-primary-active: #12346f;
+  --color-primary: #5aa3ff;
+  --color-primary-hover: #418ff4;
+  --color-primary-active: #2f78d9;
 
-  --color-success: #1f7a3f;
-  --color-success-bg: #e6f6ec;
-  --color-success-border: #b7e1c4;
-  --color-error: #b4232c;
-  --color-error-bg: #fdecec;
-  --color-error-border: #f2b5ba;
-  --color-warning: #9a5b00;
-  --color-warning-bg: #fff3e0;
-  --color-warning-border: #ffd6a4;
-  --color-info: #1b4db3;
-  --color-info-bg: #e8f0ff;
-  --color-info-border: #c1d6ff;
+  --color-success: #33c47d;
+  --color-success-bg: #162823;
+  --color-success-border: #25513b;
+  --color-error: #ff5a66;
+  --color-error-bg: #2a151a;
+  --color-error-border: #5a2730;
+  --color-warning: #f4b35f;
+  --color-warning-bg: #2a2113;
+  --color-warning-border: #5a4322;
+  --color-info: #6aa8ff;
+  --color-info-bg: #141b2a;
+  --color-info-border: #2a3a5a;
 
   --space-xs: 4px;
   --space-sm: 8px;
@@ -42,9 +43,9 @@
   --radius-md: 12px;
   --radius-lg: 20px;
 
-  --shadow-sm: 0 6px 16px rgba(22, 28, 45, 0.08);
-  --shadow-md: 0 14px 32px rgba(22, 28, 45, 0.12);
+  --shadow-sm: 0 6px 16px rgba(6, 10, 18, 0.45);
+  --shadow-md: 0 14px 32px rgba(6, 10, 18, 0.6);
 
-  --focus-ring-color: #1b4db3;
-  --focus-outline: 3px solid rgba(27, 77, 179, 0.3);
+  --focus-ring-color: #6aa8ff;
+  --focus-outline: 3px solid rgba(106, 168, 255, 0.4);
 }

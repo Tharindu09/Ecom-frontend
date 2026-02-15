@@ -38,13 +38,23 @@ const OrderDetail = ({ onToast }) => {
   const items = order?.items || order?.orderItems || [];
   const normalizedStatus = String(order?.orderStatus || order?.status || "").toLowerCase();
   const needsPayment = ["pendingpayment", "pending_payment"].includes(normalizedStatus);
+  const statusClassMap = {
+    paid: "status-badge--success",
+    pendingpayment: "status-badge--warning",
+    pending_payment: "status-badge--warning",
+    failed: "status-badge--error",
+    shipped: "status-badge--info",
+  };
+  const statusLabel = order?.orderStatus || order?.status || "Processing";
+  const statusClass = statusClassMap[normalizedStatus] || "status-badge--neutral";
 
   return (
     <section className="order-detail">
       <h1>Order #{order?.id || order?.orderId}</h1>
       <div className="order-detail__meta">
         <p className="muted">
-          Status: {order?.orderStatus || order?.status || "Processing"}
+          Status:{" "}
+          <span className={`status-badge ${statusClass}`}>{statusLabel}</span>
         </p>
         <p className="muted">
           Date:{" "}

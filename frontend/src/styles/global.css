@@ -9,8 +9,8 @@ body {
   font-size: var(--font-size-base);
   line-height: var(--line-height-base);
   color: var(--color-text);
-  background: radial-gradient(900px 520px at 10% -10%, rgba(27, 77, 179, 0.14), transparent 60%),
-    radial-gradient(820px 480px at 90% 0%, rgba(255, 186, 94, 0.18), transparent 55%),
+  background: radial-gradient(900px 520px at 8% -10%, rgba(90, 163, 255, 0.2), transparent 60%),
+    radial-gradient(820px 480px at 90% 0%, rgba(244, 179, 95, 0.12), transparent 55%),
     var(--color-bg);
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -76,7 +76,7 @@ button {
   justify-content: space-between;
   align-items: center;
   padding: var(--space-lg) clamp(1.5rem, 6vw, 6rem);
-  background: linear-gradient(120deg, var(--color-primary-active), var(--color-primary));
+  background: linear-gradient(120deg, #0f1b33, #102747);
   color: #fff;
   box-shadow: var(--shadow-sm);
   gap: var(--space-md);
@@ -146,7 +146,7 @@ button {
 
 .badge {
   background: var(--color-warning);
-  color: #fff;
+  color: #2a1a0a;
   padding: 0.15rem 0.5rem;
   border-radius: 999px;
   font-size: 0.75rem;
@@ -180,7 +180,7 @@ button {
 }
 
 .button--secondary {
-  background: var(--color-surface);
+  background: var(--color-surface-muted);
   color: var(--color-text);
   border-color: var(--color-border);
 }
@@ -332,7 +332,7 @@ button {
 .card__image {
   display: block;
   height: 200px;
-  background: #eef1f6;
+  background: var(--color-surface-muted);
 }
 
 .card__image img {
@@ -346,7 +346,7 @@ button {
   align-items: center;
   justify-content: center;
   height: 200px;
-  background: #eef1f6;
+  background: var(--color-surface-muted);
   color: var(--color-muted);
   font-weight: 500;
 }
@@ -645,7 +645,7 @@ button {
   width: 80px;
   height: 80px;
   border-radius: var(--radius-md);
-  background: #eef1f6;
+  background: var(--color-surface-muted);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -758,6 +758,59 @@ button {
 
 .payment-result--failed .payment-result__card {
   border-left: 4px solid var(--color-error);
+}
+
+.payment-result--failed .payment-result__header h1 {
+  color: var(--color-error);
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border: 1px solid transparent;
+}
+
+.status-badge--success {
+  color: var(--color-success);
+  background: var(--color-success-bg);
+  border-color: var(--color-success-border);
+}
+
+.status-badge--warning {
+  color: var(--color-warning);
+  background: var(--color-warning-bg);
+  border-color: var(--color-warning-border);
+}
+
+.status-badge--error {
+  color: var(--color-error);
+  background: var(--color-error-bg);
+  border-color: var(--color-error-border);
+}
+
+.status-badge--info {
+  color: var(--color-info);
+  background: var(--color-info-bg);
+  border-color: var(--color-info-border);
+}
+
+.status-badge--neutral {
+  color: var(--color-muted);
+  background: var(--color-surface-muted);
+  border-color: var(--color-border);
+}
+
+.payment-result--success .payment-result__card {
+  border-left: 4px solid var(--color-success);
+}
+
+.payment-result--success .payment-result__header h1 {
+  color: var(--color-success);
 }
 
 .payment__form {
