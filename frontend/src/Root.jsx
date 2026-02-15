@@ -3,6 +3,7 @@ import { BrowserRouter } from "react-router-dom";
 import App from "./App.jsx";
 import { AuthProvider } from "./auth/AuthContext.jsx";
 import { CartProvider } from "./cart/CartContext.jsx";
+import "./styles/theme.css";
 import "./styles/global.css";
 
 export default function Root() {

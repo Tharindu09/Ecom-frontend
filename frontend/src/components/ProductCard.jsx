@@ -5,6 +5,21 @@ const ProductCard = ({ product }) => {
   const id = product?.id || product?.productId;
   const image =
     product?.imageUrl || product?.image || product?.images?.[0] || "";
+  const parsedStock = Number(product?.stock ?? product?.Stock ?? product?.productStock);
+  const stockValue = Number.isFinite(parsedStock) ? parsedStock : null;
+  let stockLabel = "Out of stock";
+  let stockClass = "stock-status--error";
+
+  if (stockValue == null) {
+    stockLabel = "Stock unavailable";
+    stockClass = "stock-status--info";
+  } else if (stockValue > 5) {
+    stockLabel = "Available stock";
+    stockClass = "stock-status--success";
+  } else if (stockValue > 0) {
+    stockLabel = "Limited stock";
+    stockClass = "stock-status--warning";
+  }
 
   return (
     <div className="card">
@@ -18,6 +33,10 @@ const ProductCard = ({ product }) => {
       <div className="card__body">
         <h3>{product?.name || product?.title || "Untitled"}</h3>
         <p className="muted">{product?.category || ""}</p>
+        <div className={`stock-status ${stockClass}`}>
+          <span className="stock-status__dot" aria-hidden="true" />
+          <span>{stockLabel}</span>
+        </div>
         <div className="card__footer">
           <span className="price">
             {product?.price != null ? `$${product.price}` : "Price N/A"}
